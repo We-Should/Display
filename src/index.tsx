@@ -1,19 +1,48 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
+
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { createRoot } from 'react-dom/client';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+import { createGlobalStyle } from "styled-components";
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+export const GlobalStyle = createGlobalStyle`
+  :root {
+    --primary-color: ${({ theme }) => theme.default.primaryColor};
+    --secondary-color: ${({ theme }) => theme.default.secondaryColor};
+    --background-color: ${({ theme }) => theme.default.backgroundColor};
+    --text-color: ${({ theme }) => theme.default.textColor};
+
+    --font-family: ${({ theme }) => theme.fontFamily};
+    --font-size: ${({ theme }) => theme.fontSize};
+    --line-height: ${({ theme }) => theme.lineHeight};
+  }
+
+  html {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: var(--line-height);
+    font-size: var(--font-size);
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+`;
+
+const container = document.getElementById('root');
+const root = createRoot(container!); 
+root.render(<App />);
