@@ -1,23 +1,27 @@
-import { useEffect, useRef, useState } from "react";
-import {StayStuck} from "./lib/helpers/StayStuck";
+import { Suspense, lazy, useEffect, useState } from "react";
 import logo from "./assets/images/App/logo.svg";
 import styled, { ThemeProvider } from "styled-components";
-import { GlobalStyle } from ".";
-import { Code } from "./lib/components/atoms/Code";
 import { Logo } from "./App/lib/components/atoms/Logo";
-import { Container } from "./lib/components/atoms/Container";
 import theme from "./App/themes/weShould";
+import {  Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { NotFound } from "./App/lib/components/views/pages/NotFound";
+import { Menu } from "./lib/components/molecules/Menu";
+import { GlobalStyle } from "./App/themes/root";
+
+const Home = lazy(() => import("./App/lib/components/views/pages/Home"));
+const DemoPageStayStuck = lazy(() => import("./App/lib/components/views/pages/demos/StayStuck"));
 
 const StyledApp = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+`;
+
+const StyledHeader = styled.div`
+  padding-top: var(--padding-large);
 `;
 
 function App() {
-  const ref = useRef<HTMLDivElement | null>(null);
-
   const [store, setTheme] = useState(theme.dark);
 
   useEffect(() => {
@@ -39,31 +43,30 @@ function App() {
   }, []);
   
   return (
-    <ThemeProvider theme={store}>
-      <Container>
-        <GlobalStyle />
-        <StyledApp>
-          <Logo src={logo} className="App-logo" alt="logo" />
-          <header className="App-header">
-            <p>
-              Edit <Code>src/App.tsx</Code> and save to reload.
-            </p>
-            <div ref={ref}>
-              Lorum ipsum dolor sit amet, consectetur adipiscing elit. Sed
-              tempor, nisl ut aliquet sagittis, nisl nisl aliquet nisl,
-              nisl nisl aliquet nisl.
-
-              <StayStuck parent={ref}>
-                <div style={{height: "100px", width: "100px", backgroundColor: "blue"}}>
-                  You keep it here.
-                </div>
-              </StayStuck>
-            </div>
-          </header>
-        </StyledApp>
-      </Container>
-    </ThemeProvider>
+    <Router>
+      <ThemeProvider theme={store}>
+          <GlobalStyle />
+          <StyledApp>
+            <Logo src={logo} className="App-logo" alt="logo" />
+            <StyledHeader>
+              <Menu items={[
+                { children: "Home", to: "/" },
+                { children: "Stay Stuck", to: "/display/stay-stuck" } 
+              ]}/>
+            </StyledHeader>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="display/stay-stuck" element={<DemoPageStayStuck />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </StyledApp>
+      </ThemeProvider>
+    </Router>
   );
 }
 
 export default App;
+
+
